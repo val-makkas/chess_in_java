@@ -13,7 +13,7 @@ public class Board {
         for (int row = 0; row < _ROW; row++) {
             for (int col = 0; col < _COL; col++) {
                 if (color % 2 == 0) {
-                    g2.setColor(new Color(118,150,86));
+                    g2.setColor(new Color(118,150,85));
                 } else {
                     g2.setColor(new Color(238,238,210));
                 }
