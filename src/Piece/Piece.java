@@ -16,6 +16,7 @@ public class Piece {
     public int col, row, preCol, preRow;
     public int color;
     public Piece OccupiedPiece;
+    public boolean hasMoved;
 
     public Piece(int color, int col, int row) {
         this.color = color;
@@ -69,6 +70,7 @@ public class Piece {
         y = getY(row);
         preCol = getCol(x);
         preRow = getRow(y);
+        hasMoved = true;
     }
 
     public void resetPosition() {
@@ -124,7 +126,7 @@ public class Piece {
             }
         }
         // When moving right
-        for (int i = preCol+1; i < targetRow; i++) {
+        for (int i = preCol+1; i < targetCol; i++) {
             for (Piece piece: GamePanel.simPieces) {
                 if (piece.col == i && piece.row == targetRow) {
                     OccupiedPiece = piece;
@@ -147,6 +149,54 @@ public class Piece {
                 if (piece.col == targetCol && piece.row == r) {
                     OccupiedPiece = piece;
                     return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean pieceIsOnDiagonalLine(int targetCol, int targetRow) {
+        if (targetRow < preRow) {
+            // Up Right
+            for (int i = preCol+1; i < targetCol ; i++) {
+                int diff = Math.abs(i - preCol);
+                for (Piece piece: GamePanel.simPieces) {
+                    if (piece.col == i && piece.row == preRow - diff) {
+                        OccupiedPiece = piece;
+                        return true;
+                    }
+                }
+            }
+            // Up left
+            for (int i = preCol-1; i > targetCol ; i--) {
+                int diff = Math.abs(i - preCol);
+                for (Piece piece: GamePanel.simPieces) {
+                    if (piece.col == i && piece.row == preRow - diff) {
+                        OccupiedPiece = piece;
+                        return true;
+                    }
+                }
+            }
+        }
+        if (targetRow > preRow) {
+            // Down Right
+            for (int i = preCol+1; i < targetCol ; i++) {
+                int diff = Math.abs(i - preCol);
+                for (Piece piece: GamePanel.simPieces) {
+                    if (piece.col == i && piece.row == preRow - diff) {
+                        OccupiedPiece = piece;
+                        return true;
+                    }
+                }
+            }
+            // Down Left
+            for (int i = preCol-1; i > targetCol ; i--) {
+                int diff = Math.abs(i - preCol);
+                for (Piece piece: GamePanel.simPieces) {
+                    if (piece.col == i && piece.row == preRow - diff) {
+                        OccupiedPiece = piece;
+                        return true;
+                    }
                 }
             }
         }
