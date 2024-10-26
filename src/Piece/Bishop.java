@@ -12,4 +12,14 @@ public class Bishop extends Piece {
             image = getImage("/piece/bB");
         }
     }
+
+    public boolean canMove(int targetCol, int targetRow) {
+        if (isInBoard(targetCol, targetRow) && !isSameSquare(targetCol, targetRow)) {
+            // When moving diagonally ratio is always 1:1
+            if (Math.abs(targetCol - preCol) == Math.abs(targetRow - preRow)) {
+                return isValidSquare(targetCol, targetRow) && !pieceIsOnDiagonalLine(targetCol, targetRow);
+            }
+        }
+        return false;
+    }
 }
