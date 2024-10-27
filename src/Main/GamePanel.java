@@ -23,6 +23,7 @@ public class GamePanel extends JPanel implements Runnable {
     public static ArrayList<Piece> pieces = new ArrayList<>();
     public static ArrayList<Piece> simPieces = new ArrayList<>();
     Piece activePiece;
+    public static Piece castlePiece;
 
     public static final int WHITE = 0;
     public static final int BLACK = 1;
@@ -57,12 +58,12 @@ public class GamePanel extends JPanel implements Runnable {
         pieces.add(new Pawn(WHITE, 6, 6));
         pieces.add(new Pawn(WHITE, 7, 6));
         pieces.add(new Rook(WHITE, 0, 7));
-        pieces.add(new Rook(WHITE, 7, 4));
-        pieces.add(new Knight(WHITE, 1,7));
-        pieces.add(new Knight(WHITE, 6,7));
-        pieces.add(new Bishop(WHITE, 2,7));
-        pieces.add(new Bishop(WHITE, 5,7));
-        pieces.add(new Queen(WHITE,3,4));
+        pieces.add(new Rook(WHITE, 7, 7));
+//        pieces.add(new Knight(WHITE, 1,7));
+//        pieces.add(new Knight(WHITE, 6,7));
+//        pieces.add(new Bishop(WHITE, 2,7));
+//        pieces.add(new Bishop(WHITE, 5,7));
+//        pieces.add(new Queen(WHITE,3,7));
         pieces.add(new King(WHITE,4,7));
 
         // BLACK
@@ -126,12 +127,15 @@ public class GamePanel extends JPanel implements Runnable {
         if (!mouse.pressed) {
             if (activePiece != null) {
                 if (validSquare) {
-
-
                     copyPieces(simPieces, pieces);
                     activePiece.updatePosition();
-                } else {
 
+                    if (castlePiece != null) {
+                        castlePiece.updatePosition();
+                    }
+
+                    changePlayer();
+                } else {
                     copyPieces(pieces, simPieces);
                     activePiece.resetPosition();
                     activePiece = null;
@@ -146,6 +150,12 @@ public class GamePanel extends JPanel implements Runnable {
 
         copyPieces(pieces, simPieces);
 
+        if (castlePiece != null) {
+            castlePiece.col = castlePiece.preCol;
+            castlePiece.x = castlePiece.getX(castlePiece.col);
+            castlePiece = null;
+        }
+
         activePiece.x = mouse.x - Board.HALF_SQUARE_SIZE;
         activePiece.y = mouse.y - Board.HALF_SQUARE_SIZE;
         activePiece.col = activePiece.getCol(activePiece.x);
@@ -153,12 +163,33 @@ public class GamePanel extends JPanel implements Runnable {
 
         if (activePiece.canMove(activePiece.col, activePiece.row)) {
             canMove = true;
+            checkCastle();
             validSquare = true;
 
             if (activePiece.OccupiedPiece != null) {
                 simPieces.remove(activePiece.OccupiedPiece.getIndex());
             }
         }
+    }
+
+    private void checkCastle() {
+        if (castlePiece != null) {
+            if (castlePiece.col == 0) {
+                castlePiece.col += 3;
+            } else if (castlePiece.col == 7) {
+                castlePiece.col -= 2;
+            }
+            castlePiece.x = castlePiece.getX(activePiece.col);
+        }
+    }
+
+    private void changePlayer() {
+        if (currentColor == WHITE) {
+            currentColor = BLACK;
+        } else {
+            currentColor = WHITE;
+        }
+        activePiece = null;
     }
 
     public void paintComponent(Graphics g) {
@@ -179,6 +210,12 @@ public class GamePanel extends JPanel implements Runnable {
             }
 
             activePiece.draw(g2d);
+        }
+
+        if (currentColor == WHITE) {
+            g2d.drawString("White's turn",840 ,550);
+        } else {
+            g2d.drawString("Black's turn",840 ,550);
         }
     }
 }
